@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Kasir Pintar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; font-size: 14px; }
+        .card { margin-bottom: 15px; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .nav-tabs .nav-link { color: #495057; }
+        .nav-tabs .nav-link.active { font-weight: bold; background-color: #fff; }
+        .total-box { background: #e9ecef; padding: 15px; border-radius: 5px; font-size: 18px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid py-3">
+    <h4 class="text-center mb-3 text-primary fw-bold">🏪 KASIR TOKO MOBILE</h4>
+    
+    <div class="card bg-primary text-white p-3 mb-3">
+        <div class="row text-center">
+            <div class="col-6">
+                <small>Total Dana Transaksi / Kas</small>
+                <h5 id="saldo-toko">Rp 0</h5>
+            </div>
+            <div class="col-6">
+                <small>Total Omset Penjualan</small>
+                <h5 id="omset-toko">Rp 0</h5>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs nav-fill mb-3" id="menuKasir" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-transaksi">🛒 Transaksi</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-stok">📦 Stok Barang</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-riwayat">📜 Riwayat</button></li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="tab-transaksi">
+            <div class="card p-3">
+                <h5>Keranjang Belanja</h5>
+                <div class="mb-3">
+                    <label class="form-label">Pilih Produk</label>
+                    <select class="form-select" id="pilih-produk" onchange="tambahKeKeranjang()"></select>
+                </div>
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Nama</th><th>Qty</th><th>Subtotal</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody id="list-keranjang"></tbody>
+                </table>
+                <div class="total-box text-end mb-3">
+                    Total: <span id="total-belanja" class="text-success">Rp 0</span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Uang Bayar</label>
+                    <input type="number" class="form-control" id="uang-bayar" oninput="hitungKembalian()" placeholder="0">
+                </div>
+                <div class="mb-3 text-end">
+                    <strong>Kembalian: <span id="uang-kembalian">Rp 0</span></strong>
+                </div>
+                <button class="btn btn-success w-100 py-2 fw-bold" onclick="prosesBayar()">BAYAR & CETAK NOTA</button>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab-stok">
+            <div class="card p-3">
+                <h5>Tambah / Isi Barang</h5>
+                <div class="mb-2">
+                    <input type="text" class="form-control form-control-sm" id="nama-barang" placeholder="Nama Barang">
+                </div>
+                <div class="row g-2 mb-2">
+                    <div class="col-6"><input type="number" class="form-control form-control-sm" id="harga-beli" placeholder="Harga Modal (Beli)"></div>
+                    <div class="col-6"><input type="number" class="form-control form-control-sm" id="harga-jual" placeholder="Harga Jual"></div>
+                </div>
+                <div class="mb-2">
+                    <input type="number" class="form-control form-control-sm" id="stok-barang" placeholder="Jumlah Stok Awal">
+                </div>
+                <button class="btn btn-primary btn-sm w-100" onclick="tambahBarang()">Simpan Barang</button>
+            </div>
+            <div class="card p-3">
+                <h5>Daftar Stok Produk</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm align-middle">
+                        <thead>
+                            <tr><th>Nama</th><th>Modal</th><th>Jual</th><th>Stok</th><th>Hapus</th></tr>
+                        </thead>
+                        <tbody id="tabel-stok"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab-riwayat">
+            <div class="card p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5>Log Aktivitas Transaksi</h5>
+                    <button class="btn btn-danger btn-sm" onclick="resetRiwayat()">Hapus Semua</button>
+                </div>
+                <div class="list-group" id="list-riwayat"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let produk = JSON.parse(localStorage.getItem('kasir_produk')) || [];
+    let riwayat = JSON.parse(localStorage.getItem('kasir_riwayat')) || [];
+    let keranjang = [];
+    let totalBelanja = 0;
+
+    function init() {
+        tampilkanStok();
+        updateDropdownProduk();
+        tampilkanRiwayat();
+        hitungKeuangan();
+    }
+
+    function tambahBarang() {
+        let nama = document.getElementById('nama-barang').value;
+        let beli = parseInt(document.getElementById('harga-beli').value);
+        let jual = parseInt(document.getElementById('harga-jual').value);
+        let stok = parseInt(document.getElementById('stok-barang').value);
+        if(!nama || !beli || !jual || !stok) return alert('Mohon isi semua data barang!');
+        let index = produk.findIndex(p => p.nama.toLowerCase() === nama.toLowerCase());
+        if(index !== -1) { produk[index].stok += stok; } else { produk.push({ id: Date.now(), nama, beli, jual, stok }); }
+        localStorage.setItem('kasir_produk', JSON.stringify(produk));
+        init();
+        document.getElementById('nama-barang').value = '';
+        document.getElementById('harga-beli').value = '';
+        document.getElementById('harga-jual').value = '';
+        document.getElementById('stok-barang').value = '';
+    }
+
+    function tampilkanStok() {
+        let html = '';
+        produk.forEach((p, idx) => {
+            html += `<tr>
+                <td><strong>${p.nama}</strong></td>
+                <td>Rp ${p.beli.toLocaleString()}</td>
+                <td>Rp ${p.jual.toLocaleString()}</td>
+                <td><span class="badge ${p.stok <= 5 ? 'bg-danger' : 'bg-success'}">${p.stok}</span></td>
+                <td><button class="btn btn-danger btn-sm" onclick="hapusProduk(${idx})">🗑️</button></td>
+            </tr>`;
+        });
+        document.getElementById('tabel-stok').innerHTML = html;
+    }
+
+    function hapusProduk(idx) {
+        if(confirm("Hapus produk ini dari daftar?")) { produk.splice(idx, 1); localStorage.setItem('kasir_produk', JSON.stringify(produk)); init(); }
+    }
+
+    function updateDropdownProduk() {
+        let html = '<option value="">-- Pilih Produk untuk Dibeli --</option>';
+        produk.forEach(p => { if(p.stok > 0) { html += `<option value="${p.id}">${p.nama} (Rp ${p.jual.toLocaleString()} | Stok: ${p.stok})</option>`; } });
+        document.getElementById('pilih-produk').innerHTML = html;
+    }
+
+    function tambahKeKeranjang() {
+        let idProduk = document.getElementById('pilih-produk').value;
+        if(!idProduk) return;
+        let p = produk.find(prod => prod.id == idProduk);
+        let itemKeranjang = keranjang.find(item => item.id == idProduk);
+        if(itemKeranjang) { if(itemKeranjang.qty >= p.stok) return alert("Stok tidak mencukupi!"); itemKeranjang.qty++; } else { keranjang.push({ id: p.id, nama: p.nama, jual: p.jual, beli: p.beli, qty: 1 }); }
+        document.getElementById('pilih-produk').value = "";
+        updateKeranjang();
+    }
+
+    function updateKeranjang() {
+        let html = ''; totalBelanja = 0;
+        keranjang.forEach((item, idx) => {
+            let subtotal = item.jual * item.qty; totalBelanja += subtotal;
+            html += `<tr><td>${item.nama}</td><td><button class="btn btn-light btn-sm py-0" onclick="ubahQty(${idx}, -1)">-</button><span class="mx-1">${item.qty}</span><button class="btn btn-light btn-sm py-0" onclick="ubahQty(${idx}, 1)">+</button></td><td>Rp ${subtotal.toLocaleString()}</td><td><button class="btn btn-sm text-danger" onclick="hapusItemKeranjang(${idx})">❌</button></td></tr>`;
+        });
+        document.getElementById('list-keranjang').innerHTML = html;
+        document.getElementById('total-belanja').innerText = "Rp " + totalBelanja.toLocaleString();
+        hitungKembalian();
+    }
+
+    function ubahQty(idx, aksi) {
+        let item = keranjang[idx]; let p = produk.find(prod => prod.id == item.id);
+        if(aksi === 1 && item.qty >= p.stok) return alert("Stok tidak mencukupi!");
+        item.qty += aksi; if(item.qty <= 0) keranjang.splice(idx, 1);
+        updateKeranjang();
+    }
+
+    function hapusItemKeranjang(idx) { keranjang.splice(idx, 1); updateKeranjang(); }
+
+    function hitungKembalian() {
+        let bayar = parseInt(document.getElementById('uang-bayar').value) || 0;
+        let kembalian = bayar - totalBelanja;
+        document.getElementById('uang-kembalian').innerText = kembalian >= 0 ? "Rp " + kembalian.toLocaleString() : "Uang Kurang";
+    }
+
+    function prosesBayar() {
+        if(keranjang.length === 0) return alert("Keranjang masih kosong!");
+        let bayar = parseInt(document.getElementById('uang-bayar').value) || 0;
+        if(bayar < totalBelanja) return alert("Uang pembayaran kurang!");
+        let totalModal = 0;
+        keranjang.forEach(item => { let p = produk.find(prod => prod.id == item.id); if(p) p.stok -= item.qty; totalModal += (item.beli * item.qty); });
+        let transaksiBaru = { idNota: "NOT-" + Date.now(), tanggal: new Date().toLocaleString('id-ID'), items: [...keranjang], total: totalBelanja, modal: totalModal, untung: totalBelanja - totalModal };
+        riwayat.unshift(transaksiBaru);
+        localStorage.setItem('kasir_produk', JSON.stringify(produk));
+        localStorage.setItem('kasir_riwayat', JSON.stringify(riwayat));
+        alert(`Transaksi Berhasil!\nNota: ${transaksiBaru.idNota}\nTotal: Rp ${totalBelanja.toLocaleString()}`);
+        keranjang = []; document.getElementById('uang-bayar').value = ''; updateKeranjang(); init();
+    }
+
+    function tampilkanRiwayat() {
+        let html = '';
+        riwayat.forEach(r => {
+            let detailItems = r.items.map(i => `${i.nama} (${i.qty}x)`).join(', ');
+            html += `<div class="list-group-item list-group-item-action flex-column align-items-start"><div class="d-flex w-100 justify-content-between"><h6 class="mb-1 text-primary fw-bold">${r.idNota}</h6><small class="text-muted">${r.tanggal}</small></div><p class="mb-1 text-secondary" style="font-size: 12px;">${detailItems}</p><div class="d-flex justify-content-between text-success fw-bold"><span>Total: Rp ${r.total.toLocaleString()}</span><span class="text-badge text-warning" style="font-size: 11px;">Profit: +Rp ${r.untung.toLocaleString()}</span></div></div>`;
+        });
+        document.getElementById('list-riwayat').innerHTML = html === '' ? '<p class="text-center text-muted">Belum ada penjualan.</p>' : html;
+    }
+
+    function hitungKeuangan() {
+        let omset = 0;
+        riwayat.forEach(r => { omset += r.total; });
+        document.getElementById('saldo-toko').innerText = "Rp " + omset.toLocaleString();
+        document.getElementById('omset-toko').innerText = "Rp " + omset.toLocaleString();
+    }
+
+    function resetRiwayat() {
+        if(confirm("Apakah Anda yakin ingin menghapus semua riwayat transaksi?")) { riwayat = []; localStorage.setItem('kasir_riwayat', JSON.stringify(riwayat)); init(); }
+    }
+    init();
+</script>
+</body>
+</html>
