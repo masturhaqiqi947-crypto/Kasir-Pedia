@@ -55,24 +55,24 @@
                     Total: <span id="total-belanja" class="text-success">Rp 0</span>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Uang Bayar</label>
+                    <label class="form-label">Uang Bayar / Jumlah Transfer</label>
                     <input type="number" class="form-control" id="uang-bayar" oninput="hitungKembalian()" placeholder="0">
                 </div>
                 <div class="mb-3 text-end">
                     <strong>Kembalian: <span id="uang-kembalian">Rp 0</span></strong>
                 </div>
 
-                <!-- Informasi Pembayaran Transfer & Konfirmasi -->
+                <!-- Informasi Pembayaran Transfer (DANA & SeaBank) -->
                 <div class="card bg-light p-3 mb-3 border">
                     <h6 class="fw-bold text-dark mb-2">💳 Info Pembayaran Transfer</h6>
                     <p class="mb-1" style="font-size: 13px;"><strong>DANA:</strong> 082139291979</p>
                     <p class="mb-1" style="font-size: 13px;"><strong>SEABANK:</strong> 901917713714</p>
                     <p class="mb-1" style="font-size: 13px;"><strong>A/N:</strong> MOCH MASTUR RIDO HAQIQI</p>
                     <hr class="my-2">
-                    <p class="mb-0 text-danger" style="font-size: 12px;">📲 Harap konfirmasi setelah payment ke WhatsApp: <strong>081359887835</strong></p>
+                    <p class="mb-0 text-danger" style="font-size: 12px;">📲 Otomatis terhubung ke WhatsApp konfirmasi: <strong>081359887835</strong> setelah order.</p>
                 </div>
 
-                <button class="btn btn-success w-100 py-2 fw-bold" onclick="prosesBayar()">BAYAR & CETAK NOTA</button>
+                <button class="btn btn-success w-100 py-2 fw-bold" onclick="prosesBayar()">BAYAR & KONFIRMASI WA</button>
             </div>
         </div>
 
@@ -210,14 +210,34 @@
         if(keranjang.length === 0) return alert("Keranjang masih kosong!");
         let bayar = parseInt(document.getElementById('uang-bayar').value) || 0;
         if(bayar < totalBelanja) return alert("Uang pembayaran kurang!");
+        
         let totalModal = 0;
-        keranjang.forEach(item => { let p = produk.find(prod => prod.id == item.id); if(p) p.stok -= item.qty; totalModal += (item.beli * item.qty); });
+        let detailBelanjaStr = "";
+        keranjang.forEach(item => { 
+            let p = produk.find(prod => prod.id == item.id); 
+            if(p) p.stok -= item.qty; 
+            totalModal += (item.beli * item.qty); 
+            detailBelanjaStr += `- ${item.nama} (${item.qty}x) = Rp ${(item.jual * item.qty).toLocaleString()}%0A`;
+        });
+
         let transaksiBaru = { idNota: "NOT-" + Date.now(), tanggal: new Date().toLocaleString('id-ID'), items: [...keranjang], total: totalBelanja, modal: totalModal, untung: totalBelanja - totalModal };
         riwayat.unshift(transaksiBaru);
         localStorage.setItem('kasir_produk', JSON.stringify(produk));
         localStorage.setItem('kasir_riwayat', JSON.stringify(riwayat));
-        alert(`Transaksi Berhasil!\nNota: ${transaksiBaru.idNota}\nTotal: Rp ${totalBelanja.toLocaleString()}\n\nJangan lupa konfirmasi pembayaran ke WhatsApp: 081359887835`);
-        keranjang = []; document.getElementById('uang-bayar').value = ''; updateKeranjang(); init();
+
+        // Format pesan WhatsApp otomatis
+        let noWa = "6281359887835"; // Format internasional tanpa angka 0 di depan
+        let pesanWa = `Halo Admin TOKO HONDA CB,%0A%0ASaya ingin konfirmasi pembayaran pesanan:%0A*No. Nota:* ${transaksiBaru.idNota}%0A*Tanggal:* ${transaksiBaru.tanggal}%0A%0A*Daftar Belanja:*%0A${detailBelanjaStr}%0A*Total Bayar:* Rp ${totalBelanja.toLocaleString()}%0A%0A*Metode Pembayaran Transfer:*%0A- DANA: 082139291979%0A- SEABANK: 901917713714%0A*(A/N: MOCH MASTUR RIDO HAQIQI)*%0A%0nMohon segera diproses, terima kasih!`;
+
+        // Buka WhatsApp
+        window.open(`https://wa.me/${noWa}?text=${pesanWa}`, '_blank');
+
+        alert(`Transaksi Berhasil!\nNota: ${transaksiBaru.idNota}\nTotal: Rp ${totalBelanja.toLocaleString()}\n\nMengalihkan ke WhatsApp untuk konfirmasi pembayaran...`);
+        
+        keranjang = []; 
+        document.getElementById('uang-bayar').value = ''; 
+        updateKeranjang(); 
+        init();
     }
 
     function tampilkanRiwayat() {
