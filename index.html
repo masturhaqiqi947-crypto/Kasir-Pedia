@@ -54,6 +54,17 @@
                 <div class="total-box text-end mb-3">
                     Total: <span id="total-belanja" class="text-success">Rp 0</span>
                 </div>
+
+                <!-- Input Data Pembeli -->
+                <div class="mb-2">
+                    <label class="form-label">Nama Pembeli</label>
+                    <input type="text" class="form-control" id="nama-pembeli" placeholder="Nama Pelanggan">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nomor Telepon Pembeli</label>
+                    <input type="text" class="form-control" id="telp-pembeli" placeholder="Contoh: 081234567890">
+                </div>
+
                 <div class="mb-3">
                     <label class="form-label">Uang Bayar / Jumlah Transfer</label>
                     <input type="number" class="form-control" id="uang-bayar" oninput="hitungKembalian()" placeholder="0">
@@ -69,7 +80,7 @@
                     <p class="mb-1" style="font-size: 13px;"><strong>SEABANK:</strong> 901917713714</p>
                     <p class="mb-1" style="font-size: 13px;"><strong>A/N:</strong> MOCH MASTUR RIDO HAQIQI</p>
                     <hr class="my-2">
-                    <p class="mb-0 text-danger" style="font-size: 12px;">📲 Otomatis terhubung ke WhatsApp konfirmasi: <strong>081359887835</strong> setelah order.</p>
+                    <p class="mb-0 text-danger" style="font-size: 12px;">📲 Otomatis terhubung ke WhatsApp konfirmasi: <strong>081359887835</strong></p>
                 </div>
 
                 <button class="btn btn-success w-100 py-2 fw-bold" onclick="prosesBayar()">BAYAR & KONFIRMASI WA</button>
@@ -208,6 +219,10 @@
 
     function prosesBayar() {
         if(keranjang.length === 0) return alert("Keranjang masih kosong!");
+        let namaPembeli = document.getElementById('nama-pembeli').value.trim();
+        let telpPembeli = document.getElementById('telp-pembeli').value.trim();
+        if(!namaPembeli || !telpPembeli) return alert("Mohon isi Nama dan Nomor Telepon Pembeli!");
+
         let bayar = parseInt(document.getElementById('uang-bayar').value) || 0;
         if(bayar < totalBelanja) return alert("Uang pembayaran kurang!");
         
@@ -220,21 +235,33 @@
             detailBelanjaStr += `- ${item.nama} (${item.qty}x) = Rp ${(item.jual * item.qty).toLocaleString()}%0A`;
         });
 
-        let transaksiBaru = { idNota: "NOT-" + Date.now(), tanggal: new Date().toLocaleString('id-ID'), items: [...keranjang], total: totalBelanja, modal: totalModal, untung: totalBelanja - totalModal };
+        let transaksiBaru = { 
+            idNota: "NOT-" + Date.now(), 
+            namaPembeli: namaPembeli,
+            telpPembeli: telpPembeli,
+            tanggal: new Date().toLocaleString('id-ID'), 
+            items: [...keranjang], 
+            total: totalBelanja, 
+            modal: totalModal, 
+            untung: totalBelanja - totalModal 
+        };
+        
         riwayat.unshift(transaksiBaru);
         localStorage.setItem('kasir_produk', JSON.stringify(produk));
         localStorage.setItem('kasir_riwayat', JSON.stringify(riwayat));
 
-        // Format pesan WhatsApp otomatis
-        let noWa = "6281359887835"; // Format internasional tanpa angka 0 di depan
-        let pesanWa = `Halo Admin TOKO HONDA CB,%0A%0ASaya ingin konfirmasi pembayaran pesanan:%0A*No. Nota:* ${transaksiBaru.idNota}%0A*Tanggal:* ${transaksiBaru.tanggal}%0A%0A*Daftar Belanja:*%0A${detailBelanjaStr}%0A*Total Bayar:* Rp ${totalBelanja.toLocaleString()}%0A%0A*Metode Pembayaran Transfer:*%0A- DANA: 082139291979%0A- SEABANK: 901917713714%0A*(A/N: MOCH MASTUR RIDO HAQIQI)*%0A%0nMohon segera diproses, terima kasih!`;
+        // Format pesan WhatsApp (Tanpa info nomor DANA & SeaBank, hanya Nama, No HP, Detail Barang, dan Total)
+        let noWa = "6281359887835"; 
+        let pesanWa = `Halo Admin TOKO HONDA CB,%0A%0ASaya ingin konfirmasi pesanan:%0A*No. Nota:* ${transaksiBaru.idNota}%0A*Nama Pembeli:* ${namaPembeli}%0A*No. Telepon:* ${telpPembeli}%0A*Tanggal:* ${transaksiBaru.tanggal}%0A%0A*Daftar Belanja:*%0A${detailBelanjaStr}%0A*Total Bayar:* Rp ${totalBelanja.toLocaleString()}%0A%0AMohon segera diproses, terima kasih!`;
 
         // Buka WhatsApp
         window.open(`https://wa.me/${noWa}?text=${pesanWa}`, '_blank');
 
-        alert(`Transaksi Berhasil!\nNota: ${transaksiBaru.idNota}\nTotal: Rp ${totalBelanja.toLocaleString()}\n\nMengalihkan ke WhatsApp untuk konfirmasi pembayaran...`);
+        alert(`Transaksi Berhasil!\nNota: ${transaksiBaru.idNota}\nPembeli: ${namaPembeli}\nTotal: Rp ${totalBelanja.toLocaleString()}\n\nMengalihkan ke WhatsApp...`);
         
         keranjang = []; 
+        document.getElementById('nama-pembeli').value = '';
+        document.getElementById('telp-pembeli').value = '';
         document.getElementById('uang-bayar').value = ''; 
         updateKeranjang(); 
         init();
@@ -244,7 +271,7 @@
         let html = '';
         riwayat.forEach(r => {
             let detailItems = r.items.map(i => `${i.nama} (${i.qty}x)`).join(', ');
-            html += `<div class="list-group-item list-group-item-action flex-column align-items-start"><div class="d-flex w-100 justify-content-between"><h6 class="mb-1 text-primary fw-bold">${r.idNota}</h6><small class="text-muted">${r.tanggal}</small></div><p class="mb-1 text-secondary" style="font-size: 12px;">${detailItems}</p><div class="d-flex justify-content-between text-success fw-bold"><span>Total: Rp ${r.total.toLocaleString()}</span><span class="text-badge text-warning" style="font-size: 11px;">Profit: +Rp ${r.untung.toLocaleString()}</span></div></div>`;
+            html += `<div class="list-group-item list-group-item-action flex-column align-items-start"><div class="d-flex w-100 justify-content-between"><h6 class="mb-1 text-primary fw-bold">${r.idNota} - ${r.namaPembeli || 'Umum'} (${r.telpPembeli || '-'})</h6><small class="text-muted">${r.tanggal}</small></div><p class="mb-1 text-secondary" style="font-size: 12px;">${detailItems}</p><div class="d-flex justify-content-between text-success fw-bold"><span>Total: Rp ${r.total.toLocaleString()}</span><span class="text-badge text-warning" style="font-size: 11px;">Profit: +Rp ${r.untung.toLocaleString()}</span></div></div>`;
         });
         document.getElementById('list-riwayat').innerHTML = html === '' ? '<p class="text-center text-muted">Belum ada penjualan.</p>' : html;
     }
