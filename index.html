@@ -15,14 +15,14 @@
         .section-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 8px; color: #111; }
         
         /* Search Bar */
-        .search-box { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; outline: none; }
+        .search-box { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; outline: none; margin-bottom: 10px; }
         .search-box:focus { border-color: #ee4d2d; }
 
-        /* Product Grid */
-        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-        .product-card { background: #fff; border: 1px solid #eee; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: 0.2s; }
+        /* Product Grid (Shopee Style) */
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .product-card { background: #fff; border: 1px solid #eee; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .product-card:active { transform: scale(0.98); }
-        .product-img { width: 100%; height: 130px; object-fit: cover; background: #eee; }
+        .product-img { width: 100%; height: 140px; object-fit: cover; background: #eee; }
         .product-info { padding: 8px; }
         .product-name { font-size: 0.85rem; font-weight: 600; color: #222; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .product-price { font-size: 0.9rem; font-weight: bold; color: #ee4d2d; }
@@ -60,14 +60,14 @@
     </header>
 
     <div class="container">
-        <!-- Katalog -->
+        <!-- Katalog Produk Bergaya Shopee Grid -->
         <div class="card">
             <div class="section-title">Katalog Produk CB</div>
             <input type="text" id="searchBox" class="search-box" placeholder="Cari produk CB..." oninput="filterProducts()">
             <div id="productGrid" class="product-grid"></div>
         </div>
 
-        <!-- Keranjang -->
+        <!-- Keranjang Belanja -->
         <div class="card">
             <div class="section-title">Keranjang Belanja</div>
             <div id="cartList" class="cart-list">
@@ -81,7 +81,7 @@
         </div>
     </div>
 
-    <!-- Modal Kelola Stok & Produk / Admin -->
+    <!-- Modal Kelola Stok & Tambah Produk (Admin) -->
     <div id="stockModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -106,7 +106,7 @@
                         <input type="text" id="newProdName" class="form-control" placeholder="Nama barang...">
                     </div>
                     <div class="form-group">
-                        <label>Harga (Rp)</label>
+                        <label>Harga Jual (Rp)</label>
                         <input type="number" id="newProdPrice" class="form-control" placeholder="Contoh: 125000">
                     </div>
                     <div class="form-group">
@@ -142,15 +142,12 @@
     <script>
         // Data Produk Bawaan Awal
         const defaultProducts = [
-            { id: 1, name: "Kaos Resmi Dunia Honda CB 2020-2026", price: 125000, stock: 25, image: "kaos-cb.png" },
-            { id: 2, name: "Jok Kulit Jahit Wajik Anti Rembes", price: 150000, stock: 10, image: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=300" },
-            { id: 3, name: "Knalpot Gliter Classic CB Motif", price: 275000, stock: 5, image: "https://images.unsplash.com/photo-1558981285-6f0c94958bb6?w=300" },
-            { id: 4, name: "Lampu Depan Daymaker 5.75 inch", price: 220000, stock: 8, image: "https://images.unsplash.com/photo-1609630875176-b8007bad322c?w=300" },
-            { id: 5, name: "Stang Setir CB Classic Chrome", price: 95000, stock: 15, image: "https://images.unsplash.com/photo-1558980664-3a031cf67ea8?w=300" },
-            { id: 6, name: "Sein Bulat Classic Chrome (Set 4pcs)", price: 75000, stock: 20, image: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=300" }
+            { id: 1, name: "KAOS Honda CB", price: 90000, stock: 98, image: "kaos-cb.png" },
+            { id: 2, name: "gir set triple SSS 428", price: 295000, stock: 100, image: "https://images.unsplash.com/photo-1558981285-6f0c94958bb6?w=300" },
+            { id: 3, name: "SHOCK SEKOK TIGER / TIREV", price: 315000, stock: 100, image: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=300" },
+            { id: 4, name: "SHOCK DEPAN KAWASAKI NINJA RR", price: 650000, stock: 99, image: "https://images.unsplash.com/photo-1609630875176-b8007bad322c?w=300" }
         ];
 
-        // Ambil produk dari memori HP, jika belum ada pakai default
         let products = JSON.parse(localStorage.getItem("cb_products")) || defaultProducts;
         let cart = [];
 
@@ -330,7 +327,7 @@
             }
 
             if (!image) {
-                image = "kaos-cb.png"; // Default kalau kosong
+                image = "kaos-cb.png";
             }
 
             const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
@@ -340,7 +337,6 @@
             renderProducts();
             renderAdminProducts();
 
-            // Reset form
             document.getElementById("newProdName").value = "";
             document.getElementById("newProdPrice").value = "";
             document.getElementById("newProdStock").value = "";
