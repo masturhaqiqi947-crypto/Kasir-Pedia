@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOKO HONDA CB</title>
+    <title>MARKET DUNIA HONDA CB</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f4f6f9; font-size: 14px; }
@@ -16,25 +16,12 @@
 <body>
 
 <div class="container-fluid py-3">
-    <h4 class="text-center mb-3 text-primary fw-bold">🏍️ TOKO HONDA CB</h4>
-    
-    <div class="card bg-primary text-white p-3 mb-3">
-        <div class="row text-center">
-            <div class="col-6">
-                <small>Total Dana Transaksi / Kas</small>
-                <h5 id="saldo-toko">Rp 0</h5>
-            </div>
-            <div class="col-6">
-                <small>Total Omset Penjualan</small>
-                <h5 id="omset-toko">Rp 0</h5>
-            </div>
-        </div>
-    </div>
+    <h4 class="text-center mb-3 text-primary fw-bold">🏍️ MARKET DUNIA HONDA CB</h4>
 
     <ul class="nav nav-tabs nav-fill mb-3" id="menuKasir" role="tablist">
         <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-transaksi">🛒 Transaksi</button></li>
         <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-stok">📦 Stok Barang</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-riwayat">📜 Riwayat</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-riwayat" onclick="tutupRiwayat()">📜 Riwayat</button></li>
     </ul>
 
     <div class="tab-content">
@@ -116,12 +103,38 @@
         </div>
 
         <div class="tab-pane fade" id="tab-riwayat">
-            <div class="card p-3">
+            <!-- Form Sandi Riwayat -->
+            <div class="card p-3 text-center" id="card-login-riwayat">
+                <h5 class="text-danger mb-3">🔒 Area Terproteksi</h5>
+                <p class="text-muted" style="font-size: 13px;">Masukkan sandi untuk melihat riwayat transaksi dan laporan keuangan.</p>
+                <div class="mb-3">
+                    <input type="password" class="form-control text-center" id="sandi-riwayat" placeholder="Masukkan Sandi...">
+                </div>
+                <button class="btn btn-primary w-100 fw-bold" onclick="cekSandiRiwayat()">Buka Riwayat</button>
+            </div>
+
+            <!-- Konten Riwayat & Keuangan (Tersembunyi sebelum sandi benar) -->
+            <div class="card p-3 d-none" id="content-riwayat">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5>Log Aktivitas Transaksi</h5>
                     <button class="btn btn-danger btn-sm" onclick="resetRiwayat()">Hapus Semua</button>
                 </div>
-                <div class="list-group" id="list-riwayat"></div>
+                <div class="list-group mb-3" id="list-riwayat"></div>
+
+                <!-- Total Dana & Omset di Bawah Sendiri -->
+                <div class="card bg-primary text-white p-3 mt-3 shadow">
+                    <div class="row text-center">
+                        <div class="col-6 border-end">
+                            <small>Total Dana Transaksi / Kas</small>
+                            <h5 id="saldo-toko">Rp 0</h5>
+                        </div>
+                        <div class="col-6">
+                            <small>Total Omset Penjualan</small>
+                            <h5 id="omset-toko">Rp 0</h5>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm w-100 mt-2" onclick="tutupRiwayat()">Kunci Kembali Riwayat</button>
             </div>
         </div>
     </div>
@@ -137,8 +150,6 @@
     function init() {
         tampilkanStok();
         updateDropdownProduk();
-        tampilkanRiwayat();
-        hitungKeuangan();
     }
 
     function tambahBarang() {
@@ -250,9 +261,9 @@
         localStorage.setItem('kasir_produk', JSON.stringify(produk));
         localStorage.setItem('kasir_riwayat', JSON.stringify(riwayat));
 
-        // Format pesan WhatsApp (Tanpa info nomor DANA & SeaBank, hanya Nama, No HP, Detail Barang, dan Total)
+        // Format pesan WhatsApp (Hanya Nama, No HP, Detail Barang, dan Total)
         let noWa = "6281359887835"; 
-        let pesanWa = `Halo Admin TOKO HONDA CB,%0A%0ASaya ingin konfirmasi pesanan:%0A*No. Nota:* ${transaksiBaru.idNota}%0A*Nama Pembeli:* ${namaPembeli}%0A*No. Telepon:* ${telpPembeli}%0A*Tanggal:* ${transaksiBaru.tanggal}%0A%0A*Daftar Belanja:*%0A${detailBelanjaStr}%0A*Total Bayar:* Rp ${totalBelanja.toLocaleString()}%0A%0AMohon segera diproses, terima kasih!`;
+        let pesanWa = `Halo Admin MARKET DUNIA HONDA CB,%0A%0ASaya ingin konfirmasi pesanan:%0A*No. Nota:* ${transaksiBaru.idNota}%0A*Nama Pembeli:* ${namaPembeli}%0A*No. Telepon:* ${telpPembeli}%0A*Tanggal:* ${transaksiBaru.tanggal}%0A%0A*Daftar Belanja:*%0A${detailBelanjaStr}%0A*Total Bayar:* Rp ${totalBelanja.toLocaleString()}%0A%0AMohon segera diproses, terima kasih!`;
 
         // Buka WhatsApp
         window.open(`https://wa.me/${noWa}?text=${pesanWa}`, '_blank');
@@ -265,6 +276,26 @@
         document.getElementById('uang-bayar').value = ''; 
         updateKeranjang(); 
         init();
+    }
+
+    function cekSandiRiwayat() {
+        let sandiInput = document.getElementById('sandi-riwayat').value;
+        if(sandiInput === 'OK BAIK') {
+            document.getElementById('card-login-riwayat').classList.add('d-none');
+            document.getElementById('content-riwayat').classList.remove('d-none');
+            document.getElementById('sandi-riwayat').value = '';
+            tampilkanRiwayat();
+            hitungKeuangan();
+        } else {
+            alert('Sandi salah!');
+            document.getElementById('sandi-riwayat').value = '';
+        }
+    }
+
+    function tutupRiwayat() {
+        document.getElementById('card-login-riwayat').classList.remove('d-none');
+        document.getElementById('content-riwayat').classList.add('d-none');
+        document.getElementById('sandi-riwayat').value = '';
     }
 
     function tampilkanRiwayat() {
@@ -284,7 +315,12 @@
     }
 
     function resetRiwayat() {
-        if(confirm("Apakah Anda yakin ingin menghapus semua riwayat transaksi?")) { riwayat = []; localStorage.setItem('kasir_riwayat', JSON.stringify(riwayat)); init(); }
+        if(confirm("Apakah Anda yakin ingin menghapus semua riwayat transaksi?")) { 
+            riwayat = []; 
+            localStorage.setItem('kasir_riwayat', JSON.stringify(riwayat)); 
+            tampilkanRiwayat();
+            hitungKeuangan();
+        }
     }
     init();
 </script>
