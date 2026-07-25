@@ -19,14 +19,14 @@
     <h4 class="text-center mb-3 text-primary fw-bold">🏍️ MARKET DUNIA HONDA CB</h4>
 
     <ul class="nav nav-tabs nav-fill mb-3" id="menuKasir" role="tablist">
-        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-transaksi">🛒 Transaksi</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-stok" onclick="tutupStok()">📦 Stok Barang</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-riwayat" onclick="tutupRiwayat()">📜 Riwayat</button></li>
+        <li class="nav-item"><button class="nav-link active" id="btn-transaksi" data-bs-toggle="tab" data-bs-target="#tab-transaksi" type="button" role="tab">🛒 Transaksi</button></li>
+        <li class="nav-item"><button class="nav-link" id="btn-stok" data-bs-toggle="tab" data-bs-target="#tab-stok" type="button" role="tab">📦 Stok Barang</button></li>
+        <li class="nav-item"><button class="nav-link" id="btn-riwayat" data-bs-toggle="tab" data-bs-target="#tab-riwayat" type="button" role="tab">📜 Riwayat</button></li>
     </ul>
 
     <div class="tab-content">
         <!-- TAB TRANSAKSI -->
-        <div class="tab-pane fade show active" id="tab-transaksi">
+        <div class="tab-pane fade show active" id="tab-transaksi" role="tabpanel">
             <div class="card p-3">
                 <h5>Keranjang Belanja</h5>
                 <div class="mb-3">
@@ -76,7 +76,7 @@
         </div>
 
         <!-- TAB STOK BARANG (TERPROTEKSI SANDI) -->
-        <div class="tab-pane fade" id="tab-stok">
+        <div class="tab-pane fade" id="tab-stok" role="tabpanel">
             <!-- Form Sandi Stok -->
             <div class="card p-3 text-center" id="card-login-stok">
                 <h5 class="text-danger mb-3">🔒 Area Terproteksi - Stok Barang</h5>
@@ -119,7 +119,7 @@
         </div>
 
         <!-- TAB RIWAYAT (TERPROTEKSI SANDI) -->
-        <div class="tab-pane fade" id="tab-riwayat">
+        <div class="tab-pane fade" id="tab-riwayat" role="tabpanel">
             <!-- Form Sandi Riwayat -->
             <div class="card p-3 text-center" id="card-login-riwayat">
                 <h5 class="text-danger mb-3">🔒 Area Terproteksi - Riwayat & Keuangan</h5>
@@ -166,10 +166,29 @@
     let keranjang = [];
     let totalBelanja = 0;
 
+    let stokUnlocked = false;
+    let riwayatUnlocked = false;
+
     function init() {
         tampilkanStok();
         updateDropdownProduk();
     }
+
+    // Auto lock saat pindah tab
+    const triggerTabList = document.querySelectorAll('#menuKasir button[data-bs-toggle="tab"]');
+    triggerTabList.forEach(button => {
+        button.addEventListener('shown.bs.tab', event => {
+            let target = event.target.getAttribute('data-bs-target');
+            if(target !== '#tab-stok') {
+                stokUnlocked = false;
+                tutupStok();
+            }
+            if(target !== '#tab-riwayat') {
+                riwayatUnlocked = false;
+                tutupRiwayat();
+            }
+        });
+    });
 
     function tambahBarang() {
         let nama = document.getElementById('nama-barang').value;
@@ -299,6 +318,7 @@
     function cekSandiStok() {
         let sandiInput = document.getElementById('sandi-stok').value;
         if(sandiInput === 'OK BAIK') {
+            stokUnlocked = true;
             document.getElementById('card-login-stok').classList.add('d-none');
             document.getElementById('content-stok').classList.remove('d-none');
             document.getElementById('sandi-stok').value = '';
@@ -310,6 +330,7 @@
     }
 
     function tutupStok() {
+        stokUnlocked = false;
         document.getElementById('card-login-stok').classList.remove('d-none');
         document.getElementById('content-stok').classList.add('d-none');
         document.getElementById('sandi-stok').value = '';
@@ -319,6 +340,7 @@
     function cekSandiRiwayat() {
         let sandiInput = document.getElementById('sandi-riwayat').value;
         if(sandiInput === 'OK BAIK') {
+            riwayatUnlocked = true;
             document.getElementById('card-login-riwayat').classList.add('d-none');
             document.getElementById('content-riwayat').classList.remove('d-none');
             document.getElementById('sandi-riwayat').value = '';
@@ -331,6 +353,7 @@
     }
 
     function tutupRiwayat() {
+        riwayatUnlocked = false;
         document.getElementById('card-login-riwayat').classList.remove('d-none');
         document.getElementById('content-riwayat').classList.add('d-none');
         document.getElementById('sandi-riwayat').value = '';
