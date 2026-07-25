@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MARKET DUNIA HONDA CB - POS Dropship</title>
+    <title>MARKET DUNIA HONDA CB</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f5f5f5; color: #333; padding-bottom: 60px; }
-        header { background: #1a1a1a; color: #ffcc00; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-        header h1 { font-size: 1.1rem; font-weight: bold; }
-        .header-btns button { background: #ee4d2d; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; margin-left: 5px; }
+        
+        header { background: #1a1a1a; color: #ffcc00; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        header h1 { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; }
+        
+        .nav-tabs { display: flex; justify-content: space-around; background: #fff; border-bottom: 1px solid #ddd; font-size: 0.9rem; font-weight: bold; position: sticky; top: 0; z-index: 100; }
+        .nav-tab { padding: 12px 0; cursor: pointer; flex-grow: 1; text-align: center; color: #666; border-bottom: 3px solid transparent; transition: 0.2s; }
+        .nav-tab.active { color: #ee4d2d; border-bottom: 3px solid #ee4d2d; background: #fafafa; }
+
         .container { padding: 12px; max-width: 600px; margin: 0 auto; }
         .card { background: white; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .section-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 8px; color: #111; }
         
-        /* Search Bar */
         .search-box { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; outline: none; margin-bottom: 10px; }
         .search-box:focus { border-color: #ee4d2d; }
 
-        /* Product Grid (Shopee Style) */
         .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .product-card { background: #fff; border: 1px solid #eee; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .product-card:active { transform: scale(0.98); }
@@ -28,7 +31,6 @@
         .product-price { font-size: 0.9rem; font-weight: bold; color: #ee4d2d; }
         .product-stock { font-size: 0.75rem; color: #777; margin-top: 2px; }
 
-        /* Cart */
         .cart-list { max-height: 200px; overflow-y: auto; margin-bottom: 10px; }
         .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.85rem; }
         .cart-item-details { flex-grow: 1; padding-right: 8px; }
@@ -38,127 +40,159 @@
         .btn-whatsapp { width: 100%; background: #25d366; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; }
         .btn-whatsapp:active { background: #1ebe5d; }
 
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 200; }
-        .modal-content { background: white; width: 90%; max-width: 400px; padding: 16px; border-radius: 8px; max-height: 85vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; }
-        .close-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; }
         .form-group { margin-bottom: 10px; }
         .form-group label { display: block; font-size: 0.8rem; margin-bottom: 4px; color: #555; }
-        .form-control { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; }
-        .btn-primary { width: 100%; background: #1a1a1a; color: white; border: none; padding: 10px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        .form-control { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; outline: none; }
+        .form-control:focus { border-color: #1a1a1a; }
+        .btn-primary { width: 100%; background: #0056b3; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        .btn-lock { width: 100%; background: #6c757d; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; text-align: center; }
+
+        .stock-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 10px; background: white; }
+        .stock-table th, .stock-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .stock-table th { background: #f8f9fa; font-weight: bold; color: #333; }
+        .btn-delete { background: #dc3545; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>MARKET DUNIA HONDA CB</h1>
-        <div class="header-btns">
-            <button onclick="openStockModal()">Kelola Stok</button>
-            <button onclick="openHistoryModal()">Riwayat</button>
-        </div>
     </header>
 
-    <div class="container">
-        <!-- Katalog Produk Bergaya Shopee Grid -->
-        <div class="card">
-            <div class="section-title">Katalog Produk CB</div>
-            <input type="text" id="searchBox" class="search-box" placeholder="Cari produk CB..." oninput="filterProducts()">
-            <div id="productGrid" class="product-grid"></div>
-        </div>
-
-        <!-- Keranjang Belanja -->
-        <div class="card">
-            <div class="section-title">Keranjang Belanja</div>
-            <div id="cartList" class="cart-list">
-                <div style="text-align: center; color: #888; font-size: 0.85rem; padding: 15px;">Keranjang masih kosong</div>
-            </div>
-            <div class="total-section">
-                <span>Total:</span>
-                <span id="totalPrice" style="color: #ee4d2d;">Rp 0</span>
-            </div>
-            <button class="btn-whatsapp" onclick="checkoutWhatsApp()">Kirim Pesanan via WhatsApp</button>
-        </div>
+    <div class="nav-tabs">
+        <div class="nav-tab active" id="menuTransaksi" onclick="switchTab('transaksi')">🛒 Transaksi</div>
+        <div class="nav-tab" id="menuStok" onclick="switchTab('stok')">📦 Stok Barang</div>
+        <div class="nav-tab" id="menuRiwayat" onclick="switchTab('riwayat')">📜 Riwayat</div>
     </div>
 
-    <!-- Modal Kelola Stok & Tambah Produk (Admin) -->
-    <div id="stockModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>Kelola Stok & Produk</span>
-                <button class="close-btn" onclick="closeStockModal()">&times;</button>
+    <div class="container">
+        
+        <div id="pageTransaksi" class="tab-page">
+            <div class="card">
+                <div class="section-title">Katalog Produk CB</div>
+                <input type="text" id="searchBox" class="search-box" placeholder="Cari produk CB..." oninput="filterProducts()">
+                <div id="productGrid" class="product-grid"></div>
             </div>
-            <div id="adminLoginSection">
+
+            <div class="card">
+                <div class="section-title">Keranjang Belanja</div>
+                <div id="cartList" class="cart-list">
+                    <div style="text-align: center; color: #888; font-size: 0.85rem; padding: 15px;">Keranjang masih kosong</div>
+                </div>
+                <div class="total-section">
+                    <span>Total:</span>
+                    <span id="totalPrice" style="color: #ee4d2d;">Rp 0</span>
+                </div>
+                <button class="btn-whatsapp" onclick="checkoutWhatsApp()">Kirim Pesanan via WhatsApp</button>
+            </div>
+        </div>
+
+        <div id="pageStok" class="tab-page" style="display: none;">
+            <div id="adminLoginCard" class="card">
+                <div class="section-title">Login Admin Stok</div>
                 <div class="form-group">
                     <label>Password Admin</label>
                     <input type="password" id="adminPass" class="form-control" placeholder="Masukkan password...">
                 </div>
-                <button class="btn-primary" onclick="verifyAdmin()">Masuk</button>
+                <button class="btn-primary" onclick="verifyAdmin()">Masuk Kelola Stok</button>
             </div>
-            <div id="adminContent" style="display:none;">
-                <div style="font-size: 0.85rem; color: #25d366; font-weight: bold; margin-bottom: 10px;">Akses Diterima!</div>
-                
-                <!-- Form Tambah Produk Baru -->
-                <div style="background: #f9f9f9; padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px dashed #ddd;">
-                    <div style="font-size: 0.85rem; font-weight: bold; margin-bottom: 6px;">+ Tambah Produk Baru</div>
+
+            <div id="adminPanel" style="display: none;">
+                <div class="card">
+                    <div class="section-title">Tambah / Isi Barang</div>
                     <div class="form-group">
-                        <label>Nama Produk</label>
-                        <input type="text" id="newProdName" class="form-control" placeholder="Nama barang...">
+                        <label>Nama Barang</label>
+                        <input type="text" id="newProdName" class="form-control" placeholder="Nama Barang">
                     </div>
                     <div class="form-group">
-                        <label>Harga Jual (Rp)</label>
-                        <input type="number" id="newProdPrice" class="form-control" placeholder="Contoh: 125000">
+                        <label>Harga Modal (Beli)</label>
+                        <input type="number" id="newProdModal" class="form-control" placeholder="Harga Modal (Beli)">
                     </div>
                     <div class="form-group">
-                        <label>Stok Awal</label>
-                        <input type="number" id="newProdStock" class="form-control" placeholder="Contoh: 10">
+                        <label>Harga Jual</label>
+                        <input type="number" id="newProdPrice" class="form-control" placeholder="Harga Jual">
                     </div>
                     <div class="form-group">
-                        <label>Nama File Foto (cth: kaos-cb.png) atau Link URL</label>
-                        <input type="text" id="newProdImage" class="form-control" placeholder="kaos-cb.png">
+                        <label>Jumlah Stok Awal</label>
+                        <input type="number" id="newProdStock" class="form-control" placeholder="Jumlah Stok Awal">
                     </div>
-                    <button class="btn-primary" style="background: #ee4d2d;" onclick="addNewProduct()">Simpan Produk Baru</button>
+                    <div class="form-group">
+                        <label>Link Foto / Nama File (Opsional)</label>
+                        <input type="text" id="newProdImage" class="form-control" placeholder="https://link-gambar.com/foto.jpg">
+                    </div>
+                    <button class="btn-primary" style="background: #007bff;" onclick="addNewProduct()">Simpan Barang</button>
                 </div>
 
-                <div style="font-size: 0.85rem; font-weight: bold; margin-bottom: 8px;">Daftar Produk & Stok:</div>
-                <div id="adminProductList"></div>
-                <button class="btn-primary" style="background: #555; margin-top: 15px;" onclick="resetToDefaultProducts()">Reset ke Produk Semula</button>
+                <div class="card">
+                    <div class="section-title">Daftar Stok Produk</div>
+                    <div style="overflow-x: auto;">
+                        <table class="stock-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Modal</th>
+                                    <th>Jual</th>
+                                    <th>Stok</th>
+                                    <th>Hapus</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminTableBody"></tbody>
+                        </table>
+                    </div>
+                    <button class="btn-lock" onclick="lockAdmin()">Kunci Kembali Stok</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal Riwayat -->
-    <div id="historyModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>Riwayat Pesanan Tersimpan</span>
-                <button class="close-btn" onclick="closeHistoryModal()">&times;</button>
+        <div id="pageRiwayat" class="tab-page" style="display: none;">
+            <div class="card">
+                <div class="section-title">Riwayat Pesanan Tersimpan</div>
+                <div id="historyList" style="font-size: 0.85rem; color: #555; margin-bottom: 10px;">Belum ada riwayat pesanan.</div>
+                <button class="btn-primary" style="background: #dc3545;" onclick="clearHistory()">Hapus Riwayat</button>
             </div>
-            <div id="historyList" style="font-size: 0.85rem; color: #555;">Belum ada riwayat pesanan.</div>
-            <button class="btn-primary" style="background:#cc0000; margin-top: 12px;" onclick="clearHistory()">Hapus Riwayat</button>
         </div>
+
     </div>
 
     <script>
-        // Data Produk Bawaan Awal
         const defaultProducts = [
-            { id: 1, name: "KAOS Honda CB", price: 90000, stock: 98, image: "kaos-cb.png" },
-            { id: 2, name: "gir set triple SSS 428", price: 295000, stock: 100, image: "https://images.unsplash.com/photo-1558981285-6f0c94958bb6?w=300" },
-            { id: 3, name: "SHOCK SEKOK TIGER / TIREV", price: 315000, stock: 100, image: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=300" },
-            { id: 4, name: "SHOCK DEPAN KAWASAKI NINJA RR", price: 650000, stock: 99, image: "https://images.unsplash.com/photo-1609630875176-b8007bad322c?w=300" }
+            { id: 1, name: "KAOS Honda CB", modal: 85000, price: 90000, stock: 98, image: "kaos-cb.png" },
+            { id: 2, name: "gir set triple SSS 428", modal: 250000, price: 295000, stock: 100, image: "https://images.unsplash.com/photo-1558981285-6f0c94958bb6?w=300" },
+            { id: 3, name: "SHOCK SEKOK TIGER / TIREV", modal: 280000, price: 315000, stock: 100, image: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=300" },
+            { id: 4, name: "SHOCK DEPAN KAWASAKI NINJA RR", modal: 600000, price: 650000, stock: 99, image: "https://images.unsplash.com/photo-1609630875176-b8007bad322c?w=300" },
+            { id: 5, name: "tas", modal: 35000, price: 45000, stock: 100, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300" }
         ];
 
         let products = JSON.parse(localStorage.getItem("cb_products")) || defaultProducts;
         let cart = [];
+        let isAdminLoggedIn = false;
 
-        function saveProductsToStorage() {
+        function saveProducts() {
             localStorage.setItem("cb_products", JSON.stringify(products));
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-page').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+            if (tabName === 'transaksi') {
+                document.getElementById('pageTransaksi').style.display = 'block';
+                document.getElementById('menuTransaksi').classList.add('active');
+                renderProducts();
+            } else if (tabName === 'stok') {
+                document.getElementById('pageStok').style.display = 'block';
+                document.getElementById('menuStok').classList.add('active');
+                checkAdminState();
+            } else if (tabName === 'riwayat') {
+                document.getElementById('pageRiwayat').style.display = 'block';
+                document.getElementById('menuRiwayat').classList.add('active');
+                loadHistory();
+            }
         }
 
         function renderProducts(filterText = "") {
             const grid = document.getElementById("productGrid");
             grid.innerHTML = "";
-            
             const filtered = products.filter(p => p.name.toLowerCase().includes(filterText.toLowerCase()));
             
             if (filtered.length === 0) {
@@ -167,9 +201,11 @@
             }
 
             filtered.forEach(p => {
+                // Menggunakan onerror agar jika file lokal (seperti kaos-cb.png) tidak ada di GitHub, otomatis diganti gambar cadangan
+                let fallbackImg = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300";
                 grid.innerHTML += `
                     <div class="product-card" onclick="addToCart(${p.id})">
-                        <img src="${p.image}" class="product-img" alt="${p.name}">
+                        <img src="${p.image}" class="product-img" alt="${p.name}" onerror="this.src='${fallbackImg}'">
                         <div class="product-info">
                             <div class="product-name">${p.name}</div>
                             <div class="product-price">Rp ${p.price.toLocaleString('id-ID')}</div>
@@ -279,107 +315,88 @@
             window.open(url, '_blank');
         }
 
-        // Modal Control
-        function openStockModal() { document.getElementById("stockModal").style.display = "flex"; }
-        function closeStockModal() { 
-            document.getElementById("stockModal").style.display = "none";
-            document.getElementById("adminPass").value = "";
-            document.getElementById("adminContent").style.display = "none";
-            document.getElementById("adminLoginSection").style.display = "block";
-        }
-
         function verifyAdmin() {
             const pass = document.getElementById("adminPass").value;
             if (pass === "OK BAIK") {
-                document.getElementById("adminLoginSection").style.display = "none";
-                document.getElementById("adminContent").style.display = "block";
-                renderAdminProducts();
+                isAdminLoggedIn = true;
+                checkAdminState();
+                document.getElementById("adminPass").value = "";
             } else {
                 alert("Password Salah, Om!");
             }
         }
 
-        function renderAdminProducts() {
-            const list = document.getElementById("adminProductList");
-            list.innerHTML = "";
+        function checkAdminState() {
+            if (isAdminLoggedIn) {
+                document.getElementById("adminLoginCard").style.display = "none";
+                document.getElementById("adminPanel").style.display = "block";
+                renderAdminTable();
+            } else {
+                document.getElementById("adminLoginCard").style.display = "block";
+                document.getElementById("adminPanel").style.display = "none";
+            }
+        }
+
+        function lockAdmin() {
+            isAdminLoggedIn = false;
+            checkAdminState();
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById("adminTableBody");
+            tbody.innerHTML = "";
+
             products.forEach(p => {
-                list.innerHTML += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; border-bottom: 1px solid #eee; padding-bottom: 6px;">
-                        <span style="flex-grow: 1; padding-right: 5px;"><b>${p.name}</b><br>Rp ${p.price.toLocaleString('id-ID')} | Stok: ${p.stock}</span>
-                        <div>
-                            <button onclick="editStock(${p.id})" style="background: #ffcc00; border: none; padding: 4px 6px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.75rem;">Stok</button>
-                            <button onclick="deleteProduct(${p.id})" style="background: #cc0000; color: white; border: none; padding: 4px 6px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.75rem; margin-left: 2px;">Hapus</button>
-                        </div>
-                    </div>
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${p.name}</b></td>
+                        <td>Rp ${p.modal.toLocaleString('id-ID')}</td>
+                        <td>Rp ${p.price.toLocaleString('id-ID')}</td>
+                        <td><span style="background: #28a745; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold;">${p.stock}</span></td>
+                        <td><button class="btn-delete" onclick="deleteProduct(${p.id})">Hapus</button></td>
+                    </tr>
                 `;
             });
         }
 
         function addNewProduct() {
             const name = document.getElementById("newProdName").value.trim();
+            const modal = parseInt(document.getElementById("newProdModal").value);
             const price = parseInt(document.getElementById("newProdPrice").value);
             const stock = parseInt(document.getElementById("newProdStock").value);
             let image = document.getElementById("newProdImage").value.trim();
 
-            if (!name || isNaN(price) || isNaN(stock)) {
-                alert("Nama, harga, dan stok wajib diisi dengan benar, Om!");
+            if (!name || isNaN(modal) || isNaN(price) || isNaN(stock)) {
+                alert("Semua kolom (Nama, Modal, Jual, Stok) wajib diisi dengan benar, Om!");
                 return;
             }
 
             if (!image) {
-                image = "kaos-cb.png";
+                image = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300";
             }
 
             const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
 
-            products.push({ id: newId, name: name, price: price, stock: stock, image: image });
-            saveProductsToStorage();
-            renderProducts();
-            renderAdminProducts();
+            products.push({ id: newId, name: name, modal: modal, price: price, stock: stock, image: image });
+            saveProducts();
+            renderAdminTable();
 
             document.getElementById("newProdName").value = "";
+            document.getElementById("newProdModal").value = "";
             document.getElementById("newProdPrice").value = "";
             document.getElementById("newProdStock").value = "";
             document.getElementById("newProdImage").value = "";
 
-            alert("Produk baru berhasil ditambahkan, Om!");
-        }
-
-        function editStock(id) {
-            const p = products.find(prod => prod.id === id);
-            const newStock = prompt(`Masukkan stok baru untuk "${p.name}":`, p.stock);
-            if (newStock !== null && !isNaN(newStock)) {
-                p.stock = parseInt(newStock);
-                saveProductsToStorage();
-                renderAdminProducts();
-                renderProducts();
-            }
+            alert("Barang berhasil disimpan ke stok!");
         }
 
         function deleteProduct(id) {
-            if (confirm("Yakin ingin menghapus produk ini dari katalog?")) {
+            if (confirm("Yakin ingin menghapus produk ini?")) {
                 products = products.filter(p => p.id !== id);
-                saveProductsToStorage();
-                renderAdminProducts();
-                renderProducts();
+                saveProducts();
+                renderAdminTable();
             }
         }
-
-        function resetToDefaultProducts() {
-            if (confirm("Kembalikan ke daftar produk awal?")) {
-                products = [...defaultProducts];
-                saveProductsToStorage();
-                renderAdminProducts();
-                renderProducts();
-                alert("Katalog dikembalikan ke semula!");
-            }
-        }
-
-        function openHistoryModal() {
-            document.getElementById("historyModal").style.display = "flex";
-            loadHistory();
-        }
-        function closeHistoryModal() { document.getElementById("historyModal").style.display = "none"; }
 
         function saveHistory(orderText) {
             let history = JSON.parse(localStorage.getItem("cb_history") || "[]");
@@ -412,7 +429,6 @@
             }
         }
 
-        // Inisialisasi awal
         renderProducts();
     </script>
 </body>
