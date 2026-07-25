@@ -37,6 +37,10 @@
         .cart-item-controls { display: flex; align-items: center; gap: 6px; }
         .cart-item-controls button { width: 24px; height: 24px; background: #ddd; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
         .total-section { display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; margin: 10px 0; border-top: 1px dashed #ddd; padding-top: 8px; }
+        
+        .payment-info-box { background: #fff8f5; border: 1px solid #ffd5cc; padding: 10px; border-radius: 6px; margin: 10px 0; font-size: 0.85rem; color: #333; }
+        .payment-info-box b { color: #ee4d2d; }
+
         .btn-whatsapp { width: 100%; background: #25d366; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px; }
         .btn-whatsapp:active { background: #1ebe5d; }
 
@@ -95,6 +99,13 @@
                     <span>Total:</span>
                     <span id="totalPrice" style="color: #ee4d2d;">Rp 0</span>
                 </div>
+
+                <div class="payment-info-box">
+                    <b>Metode Pembayaran:</b><br>
+                    - DANA: <b>082139291979</b><br>
+                    - SeaBank: <b>901917713714</b>
+                </div>
+
                 <button class="btn-whatsapp" onclick="checkoutWhatsApp()">Kirim Pesanan via WhatsApp</button>
             </div>
         </div>
