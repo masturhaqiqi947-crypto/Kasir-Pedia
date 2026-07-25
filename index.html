@@ -37,7 +37,7 @@
         .cart-item-controls { display: flex; align-items: center; gap: 6px; }
         .cart-item-controls button { width: 24px; height: 24px; background: #ddd; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
         .total-section { display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; margin: 10px 0; border-top: 1px dashed #ddd; padding-top: 8px; }
-        .btn-whatsapp { width: 100%; background: #25d366; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; }
+        .btn-whatsapp { width: 100%; background: #25d366; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px; }
         .btn-whatsapp:active { background: #1ebe5d; }
 
         .form-group { margin-bottom: 10px; }
@@ -79,6 +79,19 @@
                 <div id="cartList" class="cart-list">
                     <div style="text-align: center; color: #888; font-size: 0.85rem; padding: 15px;">Keranjang masih kosong</div>
                 </div>
+                
+                <!-- Input Data Pembeli -->
+                <div style="border-top: 1px dashed #ddd; padding-top: 10px; margin-top: 10px;">
+                    <div class="form-group">
+                        <label>Nama Pemesan / Pembeli</label>
+                        <input type="text" id="buyerName" class="form-control" placeholder="Masukkan nama pembeli...">
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor WhatsApp Pembeli</label>
+                        <input type="text" id="buyerPhone" class="form-control" placeholder="Contoh: 08123456789">
+                    </div>
+                </div>
+
                 <div class="total-section">
                     <span>Total:</span>
                     <span id="totalPrice" style="color: #ee4d2d;">Rp 0</span>
@@ -201,7 +214,6 @@
             }
 
             filtered.forEach(p => {
-                // Menggunakan onerror agar jika file lokal (seperti kaos-cb.png) tidak ada di GitHub, otomatis diganti gambar cadangan
                 let fallbackImg = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300";
                 grid.innerHTML += `
                     <div class="product-card" onclick="addToCart(${p.id})">
@@ -297,7 +309,19 @@
                 return;
             }
 
-            let text = "Halo Admin, saya ingin memesan produk Honda CB:\n\n";
+            const buyerName = document.getElementById("buyerName").value.trim();
+            const buyerPhone = document.getElementById("buyerPhone").value.trim();
+
+            if (!buyerName || !buyerPhone) {
+                alert("Mohon isi Nama dan Nomor WhatsApp Pembeli terlebih dahulu, Om!");
+                return;
+            }
+
+            let text = `Halo Admin, saya ingin memesan produk Honda CB:\n\n`;
+            text += `👤 *Nama Pembeli:* ${buyerName}\n`;
+            text += `📞 *No WhatsApp:* ${buyerPhone}\n\n`;
+            text += `*Daftar Pesanan:*\n`;
+
             let total = 0;
             cart.forEach((item, index) => {
                 let subtotal = item.price * item.qty;
