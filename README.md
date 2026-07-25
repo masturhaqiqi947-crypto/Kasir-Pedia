@@ -1,2 +1,0 @@
-# Kasir-Pedia
-toko lengkap
