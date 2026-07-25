@@ -80,7 +80,6 @@
                     <div style="text-align: center; color: #888; font-size: 0.85rem; padding: 15px;">Keranjang masih kosong</div>
                 </div>
                 
-                <!-- Input Data Pembeli -->
                 <div style="border-top: 1px dashed #ddd; padding-top: 10px; margin-top: 10px;">
                     <div class="form-group">
                         <label>Nama Pemesan / Pembeli</label>
@@ -158,10 +157,22 @@
         </div>
 
         <div id="pageRiwayat" class="tab-page" style="display: none;">
-            <div class="card">
-                <div class="section-title">Riwayat Pesanan Tersimpan</div>
-                <div id="historyList" style="font-size: 0.85rem; color: #555; margin-bottom: 10px;">Belum ada riwayat pesanan.</div>
-                <button class="btn-primary" style="background: #dc3545;" onclick="clearHistory()">Hapus Riwayat</button>
+            <div id="historyLoginCard" class="card">
+                <div class="section-title">Login Riwayat Pesanan</div>
+                <div class="form-group">
+                    <label>Password Admin</label>
+                    <input type="password" id="historyPass" class="form-control" placeholder="Masukkan password...">
+                </div>
+                <button class="btn-primary" onclick="verifyHistoryAdmin()">Buka Riwayat</button>
+            </div>
+
+            <div id="historyPanel" style="display: none;">
+                <div class="card">
+                    <div class="section-title">Riwayat Pesanan Tersimpan</div>
+                    <div id="historyList" style="font-size: 0.85rem; color: #555; margin-bottom: 10px;">Belum ada riwayat pesanan.</div>
+                    <button class="btn-primary" style="background: #dc3545;" onclick="clearHistory()">Hapus Riwayat</button>
+                    <button class="btn-lock" onclick="lockHistory()">Kunci Kembali Riwayat</button>
+                </div>
             </div>
         </div>
 
@@ -179,6 +190,7 @@
         let products = JSON.parse(localStorage.getItem("cb_products")) || defaultProducts;
         let cart = [];
         let isAdminLoggedIn = false;
+        let isHistoryLoggedIn = false;
 
         function saveProducts() {
             localStorage.setItem("cb_products", JSON.stringify(products));
@@ -199,7 +211,7 @@
             } else if (tabName === 'riwayat') {
                 document.getElementById('pageRiwayat').style.display = 'block';
                 document.getElementById('menuRiwayat').classList.add('active');
-                loadHistory();
+                checkHistoryState();
             }
         }
 
@@ -364,6 +376,33 @@
         function lockAdmin() {
             isAdminLoggedIn = false;
             checkAdminState();
+        }
+
+        function verifyHistoryAdmin() {
+            const pass = document.getElementById("historyPass").value;
+            if (pass === "OK BAIK") {
+                isHistoryLoggedIn = true;
+                checkHistoryState();
+                document.getElementById("historyPass").value = "";
+            } else {
+                alert("Password Salah, Om!");
+            }
+        }
+
+        function checkHistoryState() {
+            if (isHistoryLoggedIn) {
+                document.getElementById("historyLoginCard").style.display = "none";
+                document.getElementById("historyPanel").style.display = "block";
+                loadHistory();
+            } else {
+                document.getElementById("historyLoginCard").style.display = "block";
+                document.getElementById("historyPanel").style.display = "none";
+            }
+        }
+
+        function lockHistory() {
+            isHistoryLoggedIn = false;
+            checkHistoryState();
         }
 
         function renderAdminTable() {
