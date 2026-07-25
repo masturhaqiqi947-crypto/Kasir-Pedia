@@ -16,7 +16,11 @@
 <body>
 
 <div class="container-fluid py-3">
-    <h4 class="text-center mb-3 text-primary fw-bold">🏍️ MARKET DUNIA HONDA CB</h4>
+    <!-- LOGO & JUDUL TOKO -->
+    <div class="text-center mb-3">
+        <img src="1784957013288.png" alt="Logo Toko" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid #0d6efd; margin-bottom: 8px;">
+        <h4 class="text-primary fw-bold">MARKET DUNIA HONDA CB</h4>
+    </div>
 
     <ul class="nav nav-tabs nav-fill mb-3" id="menuKasir" role="tablist">
         <li class="nav-item"><button class="nav-link active" id="btn-transaksi" data-bs-toggle="tab" data-bs-target="#tab-transaksi" type="button" role="tab">🛒 Transaksi</button></li>
@@ -174,7 +178,6 @@
         updateDropdownProduk();
     }
 
-    // Auto lock saat pindah tab
     const triggerTabList = document.querySelectorAll('#menuKasir button[data-bs-toggle="tab"]');
     triggerTabList.forEach(button => {
         button.addEventListener('shown.bs.tab', event => {
@@ -314,7 +317,6 @@
         init();
     }
 
-    // Keamanan Menu Stok
     function cekSandiStok() {
         let sandiInput = document.getElementById('sandi-stok').value;
         if(sandiInput === 'OK BAIK') {
@@ -336,7 +338,6 @@
         document.getElementById('sandi-stok').value = '';
     }
 
-    // Keamanan Menu Riwayat
     function cekSandiRiwayat() {
         let sandiInput = document.getElementById('sandi-riwayat').value;
         if(sandiInput === 'OK BAIK') {
