@@ -38,6 +38,7 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             margin-bottom: 30px;
+            position: relative;
         }
 
         header {
@@ -96,6 +97,37 @@
         table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
         th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid #e2e8f0; }
         th { color: var(--text-muted); font-weight: 600; }
+
+        /* Custom Modal Password Styling */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal-box {
+            background: #ffffff;
+            width: 85%;
+            max-width: 320px;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .modal-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+        .modal-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
     </style>
 </head>
 <body>
@@ -194,6 +226,19 @@
             </table>
         </div>
     </div>
+
+    <!-- KOTAK SANDI KUSTOM (MODAL) -->
+    <div id="passwordModal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-title">Autentikasi Diperlukan</div>
+            <div class="modal-desc">Masukkan sandi untuk mengakses menu ini</div>
+            <input type="password" id="passInput" class="form-control" placeholder="Masukkan sandi..." style="margin-bottom: 12px; text-align: center;">
+            <div style="display: flex; gap: 8px;">
+                <button class="btn" style="background: #e2e8f0; color: #334155; flex: 1;" onclick="closePasswordModal()">Batal</button>
+                <button class="btn btn-success" style="flex: 1;" onclick="submitPassword()">Masuk</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -209,20 +254,46 @@
     let cart = JSON.parse(localStorage.getItem('cb_cart')) || [];
     let transactions = JSON.parse(localStorage.getItem('cb_transactions')) || [];
 
+    let pendingTab = '';
+    let pendingElement = null;
+
     function formatRupiah(num) {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
     }
 
     function switchTab(tabName, element) {
-        // Cek sandi jika ingin membuka menu Stok Barang atau Riwayat
         if (tabName === 'admin' || tabName === 'history') {
-            let password = prompt("Masukkan Sandi untuk mengakses menu ini:");
-            if (password !== "OK BAIK") {
-                alert("Sandi salah atau dibatalkan!");
-                return;
-            }
+            pendingTab = tabName;
+            pendingElement = element;
+            document.getElementById('passInput').value = '';
+            document.getElementById('passwordModal').classList.remove('hidden');
+            document.getElementById('passInput').focus();
+            return;
         }
+        executeTabSwitch(tabName, element);
+    }
 
+    function closePasswordModal() {
+        document.getElementById('passwordModal').classList.add('hidden');
+        pendingTab = '';
+        pendingElement = null;
+    }
+
+    function submitPassword() {
+        const pass = document.getElementById('passInput').value;
+        if (pass === "OK BAIK") {
+            document.getElementById('passwordModal').classList.add('hidden');
+            executeTabSwitch(pendingTab, pendingElement);
+            pendingTab = '';
+            pendingElement = null;
+        } else {
+            alert("Sandi salah!");
+            document.getElementById('passInput').value = '';
+            document.getElementById('passInput').focus();
+        }
+    }
+
+    function executeTabSwitch(tabName, element) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
         document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
 
