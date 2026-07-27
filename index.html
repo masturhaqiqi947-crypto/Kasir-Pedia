@@ -104,9 +104,9 @@
     <header>MARKET DUNIA HONDA CB</header>
 
     <div class="nav-tabs">
-        <div class="nav-tab active" onclick="switchTab('shop')"><i class="fa-solid fa-cart-shopping"></i> Transaksi</div>
-        <div class="nav-tab" onclick="switchTab('admin')"><i class="fa-solid fa-boxes-stacked"></i> Stok Barang</div>
-        <div class="nav-tab" onclick="switchTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</div>
+        <div class="nav-tab active" onclick="switchTab('shop', this)"><i class="fa-solid fa-cart-shopping"></i> Transaksi</div>
+        <div class="nav-tab" onclick="switchTab('admin', this)"><i class="fa-solid fa-boxes-stacked"></i> Stok Barang</div>
+        <div class="nav-tab" onclick="switchTab('history', this)"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</div>
     </div>
 
     <!-- TAB TRANSAKSI / KATALOG -->
@@ -213,21 +213,30 @@
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
     }
 
-    function switchTab(tabName) {
+    function switchTab(tabName, element) {
+        // Cek sandi jika ingin membuka menu Stok Barang atau Riwayat
+        if (tabName === 'admin' || tabName === 'history') {
+            let password = prompt("Masukkan Sandi untuk mengakses menu ini:");
+            if (password !== "OK BAIK") {
+                alert("Sandi salah atau dibatalkan!");
+                return;
+            }
+        }
+
         document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
         document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
 
         if (tabName === 'shop') {
             document.getElementById('tab-shop').classList.remove('hidden');
-            event.currentTarget.classList.add('active');
+            if(element) element.classList.add('active');
             renderCatalog();
         } else if (tabName === 'admin') {
             document.getElementById('tab-admin').classList.remove('hidden');
-            event.currentTarget.classList.add('active');
+            if(element) element.classList.add('active');
             renderAdminProducts();
         } else if (tabName === 'history') {
             document.getElementById('tab-history').classList.remove('hidden');
-            event.currentTarget.classList.add('active');
+            if(element) element.classList.add('active');
             renderHistory();
         }
     }
@@ -419,7 +428,6 @@
             };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
-            // Tanpa foto
             products.push({ id: newId, name: name, price: price, stock: stock, image: "" });
             localStorage.setItem('cb_products', JSON.stringify(products));
             resetFormAndRefresh();
